@@ -13,25 +13,25 @@ This was to be done primarily using [Django](https://www.djangoproject.com/) and
 
 The site uses standard Django auth to control access to features such as creating and bidding on listings, managing your watchlist, and interacting with other users through listing comments.
 
-![Auth](media/site-images/Auth.png?raw=true)
+![Auth](Images/Auth.png?raw=true)
 
 ### Active Listings
 
 The landing page will present users, authenticated or not, with the current active listings.
 
-![Active Listings](media/site-images/ActiveListings.png?raw=true)
+![Active Listings](Images/ActiveListings.png?raw=true)
 
 ### Listing Page
 
 Details for individual listings, as well as functionality mentioned earlier and listing owner control to awarding or cancel a listing, are available on the listing page.
 
-![Listing Page](media/site-images/ListingView.png?raw=true)
+![Listing Page](Images/ListingView.png?raw=true)
 
 ### Categories
 
 Each listing can be assigned a category which is displayed on the Current Listing page cards as well as can be used to filter listings.
 
-![Categories](media/site-images/Categories.png?raw=true)
+![Categories](Images/Categories.png?raw=true)
 
 
 
