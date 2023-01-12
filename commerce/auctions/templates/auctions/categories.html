@@ -1,0 +1,51 @@
+{% extends "auctions/layout.html" %}
+{% load berube-tags %}
+
+{% block title %}Categories{% endblock %}
+
+{% block body %}
+<div id="card-list col">
+    <h2 class="text-center">Choose one of our <strong>incredible</strong> categories</h2>
+
+    <div id="category-row" class="d-flex justify-content-center mb-4">
+        {% for category in categories %}
+        <a href="{% url 'view_category' category_id=category.id %}" id="id-{{ category|space_safe }}"
+            class="category-row-item-container d-flex flex-column m-4 text-center text-reset text-decoration-none {% if category.id == current_category %}active{% endif %}">
+            <div
+                class="category-row-item-image d-inline-flex align-items-center justify-content-center h-100 border rounded-circle">
+                <i class="{{ category.icon }}"></i>
+            </div>
+            <span class="fs-5 fw-bold">{{ category.name }}</span>
+        </a>
+        {% endfor %}
+    </div>
+
+    {% if listings %}
+    {% include 'auctions/partial_listing_cards.html' %}
+    {% else  %}
+    <hr class="listing-card-title mt-5">
+    {% endif %}
+
+</div>
+
+
+<footer class="row text-center"></footer>
+{% endblock %}
+
+{% block dirty-style %}
+{% for category in categories %}
+
+#id-{{ category|space_safe }}:hover .category-row-item-image,
+#id-{{ category|space_safe }}.active .category-row-item-image {
+border-color: #{{ category.hex_color_code }} !important;
+box-shadow: 0 0 30px 5px #{{ category.hex_color_code }};
+}
+
+#id-{{ category|space_safe }}:hover .category-row-item-image i,
+#id-{{ category|space_safe }}:hover span,
+#id-{{ category|space_safe }}.active .category-row-item-image i,
+#id-{{ category|space_safe }}.active span {
+color: #{{ category.hex_color_code }};
+}
+{% endfor %}
+{% endblock %}

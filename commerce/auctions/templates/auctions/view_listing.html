@@ -1,0 +1,185 @@
+{% extends "auctions/layout.html" %}
+{% load tz %}
+{% load berube-tags %}
+
+{% block title %}View Listing{% endblock %}
+
+{% block body %}
+<div id="view-listing" class="col-xxl h-100">
+
+    <div id="listing-alerts" class="">
+        {% if request.user == high_bid.user %}
+        {% if listing.completed %}
+        <div class="banner alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Congratulations!</strong> You have won this item!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% else %}
+        <div class="banner alert alert-success alert-dismissible fade show" role="alert" data-timeout="5000">
+            You are the current high bidder!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% endif %}
+
+        {% if not listing.active %}
+        <div class="banner banner alert alert-warning alert-dismissible fade show" role="alert">
+            This listing has ended.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+    </div>
+
+    <div id="title" class="d-flex align-items-center">
+        <h1 class="ms-5">{{ listing.title }}</h1>
+    </div>
+
+    <div id="item" class="row mx-1 p-2 flex-wrap" style="height: 600px">
+
+        <div id="image" class="col-6 h-100 d-flex align-items-center justify-content-center position-relative">
+            <img class="rounded shadow object-fit-cover"
+                src="{% if not listing.image %}{{ default_image }}{% else %}{{ listing.image.url }}{% endif %}">
+            {% if not listing.user == request.user and user.is_authenticated %}
+            {% if not watching %}
+            <a href="{% url 'watch' listing_id=listing.id %}"
+                class="btn btn-danger position-absolute bottom-0 end-0 mb-4 me-5"><i class="bi bi-eye-fill"></i>
+                Watch this item?</a>
+            {% else %}
+            <a href="{% url 'watch' listing_id=listing.id %}"
+                class="btn btn-success position-absolute bottom-0 end-0 mb-4 me-5"><i class="bi bi-eye-fill"></i>
+                Watching!</a>
+            {% endif %}
+            {% endif %}
+        </div>
+
+        <div id="details" class="col-6 h-100 d-flex flex-column justify-content-between">
+            <div id="description" class="row mx-2 mt-2 p-3 rounded overflow-hidden panel-background">
+                <div class="col">
+                    <h3>Description</h3>
+                    <p>{{ listing.description|linebreaks }}</p>
+                </div>
+            </div>
+            <div id="attributes" class="row mx-2 p-3 rounded overflow-hidden panel-background">
+                <h3>Details</h3>
+                <ul>
+                    {% if request.COOKIES.time_zone %}
+                    <li><strong>Initial offering:</strong> {{ listing.created_at | timezone:request.COOKIES.time_zone }}
+                    </li>
+                    {% else %}
+                    <li><strong>Initial offering:</strong> {{ listing.created_at }}</li>
+                    {% endif %}
+                    <li><strong>Seller:</strong> {{ listing.user.username }}</li>
+                    <li><strong>Initial price:</strong> ${{ listing.price }}</li>
+                    <li><strong>Status:</strong> {% if listing.active %}
+                        <span class="text-success fw-bold">Available</span>
+                        {% else %}
+                        {% if listing.completed %}
+                        <span class="text-danger">Sold to {{ high_bid.user.username}} for ${{ high_bid.price }}!</span>
+                        {% else %}
+                        <span class="text-primary">No longer available.</span>
+                        {% endif %}
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+            <div id="bid"
+                class="row mx-2 mb-2 p-3 rounded overflow-hidden panel-background {% if not user.is_authenticated or not listing.active %}dimmed{% endif %}"
+                {% if not listing.active %} reason-text="This listing is now closed."
+                {% elif not user.is_authenticated %} reason-text="Please login to access this content." {% endif %}>
+                <h3>Current Bid: $<span class="text-success">
+                        {% if high_bid %}
+                        {{ high_bid.price }}
+                        {% else %}
+                        {{ listing.price }}
+                        {% endif %}
+                    </span></h3>
+                {% if request.user == listing.user %}
+                <div class="col-6 gap-2 w-100">
+                    <span class="fs-4 me-3 text-secondary align-middle">Owner Controls: </span>
+                    <a href="{% url 'cancel_listing' listing_id=listing.id %}"
+                        class="btn btn-danger ms-5 me-1 {% if high_bid %}disabled{% endif %}">Cancel Listing</a>
+                    <a href="{% url 'accept_bid' listing_id=listing.id %}"
+                        class="btn btn-success mx-1 {% if not high_bid %}disabled{% endif %}">Accept Offer</a>
+                </div>
+                {% if high_bid %}
+                <div class="form-text text-center">You are unable to cancel a listing with active bids.</div>
+                {% endif %}
+                {% if not high_bid %}
+                <div class="form-text text-center">You are only able to cancel a listing if there are no bids available.
+                </div>
+                {% endif %}
+                {% else %}
+                {% with min_bid=high_bid.price|max:listing.price|default:listing.price|add:1 %}
+                <form id="bid-form" class="col-12" action="{% url 'create_bid' listing_id=listing.id %}" method="post">
+                    <fieldset {% if request.user == high_bid.user %}disabled{% endif %}>
+                        {% csrf_token %}
+                        <div id="bid-box-wrapper" class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" min="{{ min_bid }}" max="100000"
+                                value="{{ min_bid }}" required name="bid_amount" aria-describedby="bidHelp"
+                                label="Your bid:">
+                            <button type="submit" class="btn btn-primary float-right">Bid!</button>
+                        </div>
+                        {% if not request.user == high_bid.user %}
+                        <div id="bidHelp" class="form-text">Your bid should be larger than the current bid to win!</div>
+                        {% else %}
+                        <div id="bidHelp" class="form-text text-success">You are already the <strong>high
+                                bidder</strong> on this item. Good luck!</div>
+                        {% endif %}
+                    </fieldset>
+                </form>
+                {% endwith %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <hr class="ms-5 me-4">
+
+    <div id="comments" class="row ms-4 overflow-hidden pb-1" reason-text="Please login to access this content.">
+        <div id="messages" class="col-12 mt-1 mb-3 overflow-auto">
+            {% with comments=listing.comments.all %}
+            {% if comments %}
+            {% for comment in comments %}
+            <div class="px-4 pb-2 d-flex">
+                <strong class="pe-2 message-field-width">{{ comment.user }}: </strong>
+                <span class="">{{ comment.text }}</span>
+                <small class="ms-auto text-muted text-end message-field-width">
+                    {% if request.COOKIES.time_zone %}
+                    {{ comment.created_at | timezone:request.COOKIES.time_zone | nt_plus:"%b %e, %Y @ %-I:%M %P" }}
+                    {% else %}
+                    {{ comment.created_at }}
+                    {% endif %}
+                </small>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div id="no-comments"
+                class="h-100 d-flex justify-content-center align-items-center overflow-hidden text-no-wrap">
+                <span><i class="bi-chat-dots-fill"></i> Comments?</span>
+            </div>
+            {% endif %}
+            {% endwith %}
+        </div>
+        <form id="comment-form" class="col-12 {% if not user.is_authenticated or not listing.active %}dimmed{% endif %}"
+            {% if not listing.active %} reason-text="This listing is now closed." {% elif not user.is_authenticated %}
+            reason-text="Please log in to access this functionality." {% endif %}
+            action="{% url 'create_comment' listing_id=listing.id %}" method="post">
+            {% csrf_token %}
+            <div id="comment-box-wrapper" class="input-group mx-4">
+                <input type="text" required class="form-control" placeholder="Share your wisdom!" name="comment">
+                <button type="submit" class="btn btn-primary float-right">Send</button>
+            </div>
+        </form>
+    </div>
+
+    <footer class="row text-center"></footer>
+
+</div>
+
+<script>
+    var objDiv = document.getElementById("messages");
+    objDiv.scrollTop = objDiv.scrollHeight;
+</script>
+
+{% endblock %}

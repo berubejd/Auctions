@@ -1,0 +1,277 @@
+html {
+    height: 70%;
+}
+
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    color: #555E69;
+    background-color: #FDFDFD;
+    /* #F7F7F7, #F2F3F4, #FDFDFD*/
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Navbar Links */
+
+a.nav-link.login-link {
+    width: 150px;
+}
+
+.nav-link:hover {
+    color: white;
+    background-color: #0D6EFD;
+}
+
+.nav-link .user-normal {
+    display: block;
+}
+
+.nav-link .user-hover {
+    display: none;
+}
+
+.nav-link:hover .user-normal {
+    display: none;
+}
+
+.nav-link:hover .user-hover {
+    display: block;
+}
+
+/* Login and Registration */
+
+#loginForm,
+#registerForm {
+    max-width: 400px;
+    border-color: #0D6EFD;
+}
+
+/* Create Listing */
+
+#create-listing .helptext {
+    margin-top: 0.25rem;
+    font-size: .875em;
+    color: var(--bs-secondary-color);
+}
+
+/* View Listing */
+
+#view-listing {
+    min-width: 1200px;
+}
+
+#view-listing #title {
+    height: 100px;
+    max-height: 100px;
+}
+
+#view-listing img {
+    height: 565px;
+    width: 565px;
+    min-width: 565px
+}
+
+.panel-background {
+    background-color: #F5F5F5;
+}
+
+#view-listing #description {
+    height: 250px;
+    max-height: 250px;
+}
+
+#view-listing #attributes {
+    height: 170px;
+}
+
+#view-listing #bid {
+    height: 130px;
+}
+
+#view-listing #details #attributes li {
+    list-style-type: none;
+    color: #636669;
+}
+
+#view-listing #comments {
+    max-height: 270px;
+}
+
+#view-listing #messages,
+#view-listing #comment-form {
+    max-height: 195px;
+}
+
+#view-listing #messages {
+    min-height: 195px;
+    width: 98%;
+}
+
+#view-listing .message-field-width {
+    min-width: 120px;
+}
+
+#view-listing #comment-box-wrapper {
+    width: auto;
+}
+
+#no-comments,
+#no-listings {
+    color: rgba(33, 37, 41, 0.05);
+    font-size: 8rem;
+    font-weight: bold;
+}
+
+#no-comments i,
+#no-listings i {
+    font-size: 10rem;
+}
+
+footer {
+    height: 100px;
+}
+
+.dimmed {
+    position: relative;
+}
+
+.dimmed:after {
+    z-index: 10;
+    display: flex;
+    position: absolute;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(126, 126, 126, .9);
+    color: #F5F5F5;
+    font-size: 1.25rem;
+    justify-content: center;
+    align-items: center;
+    content: attr(reason-text);
+}
+
+.dimmed:after .login-required {
+    content: "Please login to access this content."
+}
+
+.dimmed:after .listing-not-available {
+    content: "This listing is no longer available."
+}
+
+/* Card View */
+
+#card-list {
+    height: fit-content;
+}
+
+#card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 350px);
+    justify-content: start;
+    grid-gap: 3rem;
+    justify-content: center;
+}
+
+.card.listing {
+    height: 450px;
+}
+
+.card:hover img {
+    transform: scale(1.05);
+}
+
+.card img {
+    transition: all .75s;
+}
+
+.card .card-description {
+    display: none;
+}
+
+.card:hover .card-description {
+    display: inherit;
+    background-color: #0000003F;
+    border-radius: 0.5rem;
+    padding: 5px;
+}
+
+#no-listings {
+    grid-column: span 3;
+}
+
+.closed {
+    color: #997404;
+    background-color: #FFF3CDB3;
+    border-color: #FFE69C;
+    border: 1px solid;
+    border-radius: 0.5rem;
+}
+
+.complete {
+    color: #146C43;
+    background-color: #D1E7DDB3;
+    border-color: #A3CFBB;
+    border: 1px solid;
+    border-radius: 0.5rem;
+}
+
+/* Listing Cards */
+
+.listing-cards-title {
+    width: 90%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+/* Category Nav */
+
+.category-row-item-container {
+    width: 100px;
+    height: 100px;
+}
+
+.category-row-item-container.active {
+    pointer-events: none;
+}
+
+.category-row-item-container i {
+    font-size: 60px;
+}
+
+.category-row-item-image {
+    border-color: #555E69 !important;
+    border-width: 6px !important;
+}
+
+.category-row-item-image:hover,
+.category-row-item-image:hover i {
+    transition: all .5s;
+    transform: scale(1.05);
+}
+
+
+/* Custom Separator https://stackoverflow.com/a/26634224 */
+
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.separator::before,
+.separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #000;
+}
